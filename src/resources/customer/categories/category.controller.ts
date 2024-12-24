@@ -43,11 +43,16 @@ class CategoryController implements Controller{
   ): Promise<void> => {
     try {
       const { name, productsId } = req.body;
-  
-      console.log(name);
-      console.log(productsId);
-      console.log(req.body);
-
+      let categoryPresent=null
+      try{
+        categoryPresent = await this.categoryService.getCategoryByName(name)
+      }
+      catch(error){
+        categoryPresent = null
+      }
+      if(categoryPresent){
+        return next(new HttpException(400, "Category already present"));
+      }
       if (!Array.isArray(productsId)) {
         return next(new HttpException(400, "Product IDs must be an array"));
       }

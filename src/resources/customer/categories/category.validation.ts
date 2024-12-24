@@ -3,7 +3,7 @@ import Joi from "joi";
 
 
 const read = Joi.object({
-  name: Joi.string().required(),
+  name: Joi.string().min(3).required(),
   productsId: Joi.array().items(Joi.string()).required()
 })
 
