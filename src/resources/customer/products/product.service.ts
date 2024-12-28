@@ -34,6 +34,14 @@ class ProductService{
       throw new Error('Unable to fetch product: ' + error.message);
     }
   }
+  // public async getProductByName(name: string):Promise<Product | null>{
+  //   try{
+  //     const product = await this.product.find({name: name});
+  //     if(!product){
+        
+  //     }
+  //   }
+  // }
   
 }
 

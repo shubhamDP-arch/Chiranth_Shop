@@ -4,7 +4,7 @@ import { Document, Types } from "mongoose";
 
 class CategoryService{
   private category = categoryModel;
-// later to be commented
+
 public async create(name: string, productsId: string[]): Promise<Category> {
   try {
     const category = await this.category.create({ name, products: productsId });

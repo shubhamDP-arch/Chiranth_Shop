@@ -4,6 +4,8 @@ import compression from 'compression';
 import cors from 'cors';
 import morgan from 'morgan';
 import Controller from '@/utils/interfaces/controller.interface';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 
 import helmet from 'helmet';
 
@@ -30,6 +32,7 @@ class App{
     this.express.use(express.json())
     this.express.use(express.urlencoded({extended:false}))
     this.express.use(compression())
+    this.initialiseSwagger();
     
 
   }
@@ -59,11 +62,34 @@ class App{
     )
 
 }
+private initialiseSwagger(): void {
+  const options = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'Express API with Swagger',
+        version: '1.0.0',
+        description: 'API documentation for your Express app',
+      },
+      servers: [
+        {
+          url: `http://localhost:${this.port}/api`,
+          description: 'Development server',
+        },
+      ],
+    },
+    apis: ['./src/**/*.ts'], // Path to the API docs
+  };
+  const specs = swaggerJsdoc(options);
+  this.express.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+}
   public listen(): void{
     this.express.listen(this.port,  ()=>{
       console.log(`App is listening on port ${this.port}`)
+      console.log(`Swagger docs available at http://localhost:${this.port}/api-docs`);
     })
   }
+
 }
 
 export default App;
