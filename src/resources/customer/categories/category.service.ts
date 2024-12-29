@@ -45,16 +45,13 @@ class CategoryService {
 
 
     public async getCategoryByName(name: string): Promise<(Document<unknown, {}, Category> & Category)> {
-        try {
             const category = await this.category.findOne({ name }).populate("products");
             if (!category) {
                 throw new Error("Category not found");
             }
 
             return category;
-        } catch (error: any) {
-            throw new Error("Unable to fetch category by name: " + error.message);
-        }
+    
     }
 }
 

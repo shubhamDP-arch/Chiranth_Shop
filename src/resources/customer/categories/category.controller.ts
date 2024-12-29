@@ -161,7 +161,7 @@ class CategoryController implements Controller {
     ): Promise<void> => {
         try {
             const { name, productsId } = req.body;
-
+            console.log(name)
             if (!name) {
                 return next(new HttpException(400, "Category name is required"));
             }
@@ -174,8 +174,10 @@ class CategoryController implements Controller {
             if (!isValidIds) {
                 return next(new HttpException(400, "One or more Product IDs are invalid"));
             }
-
-            const categoryPresent = await this.categoryService.getCategoryByName(name);
+            
+                const categoryPresent = await this.categoryService.getCategoryByName(name);
+           
+          
             if (categoryPresent) {
                 return next(new HttpException(400, "Category already exists"));
             }
@@ -209,8 +211,8 @@ class CategoryController implements Controller {
         next: NextFunction
     ): Promise<void> => {
         try {
-            const { id } = req.params;
-
+            const { id } = req.body;
+            console.log(id)
             if (!id || !mongoose.Types.ObjectId.isValid(id)) {
                 return next(new HttpException(400, "Invalid category ID"));
             }
@@ -241,7 +243,7 @@ class CategoryController implements Controller {
             }
     
             const category = await this.categoryService.getCategoryByName(name);
-    
+           
             if (!category) {
                 return next(new HttpException(404, "Category not found"));
             }

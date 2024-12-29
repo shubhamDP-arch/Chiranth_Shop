@@ -11,7 +11,7 @@ class UserService{
             throw new Error('All fields are required.');
         }
 
-        const existingUser = await this.user.findOne({ where: { email } });
+        const existingUser = await this.user.findOne({email });
         console.log(existingUser)
         if (existingUser) {
             console.log("hello exist")
@@ -38,8 +38,9 @@ public async login(email: string, password: string): Promise<string> {
       if (!email || !password) {
           throw new Error('Email and password are required.');
       }
-
-      const user = await this.user.findOne({ where: { email } });
+      console.log(email)
+      const user = await this.user.findOne({ email });
+      console.log(user)
       if (!user) {
           throw new Error('No account found with this email address.');
       }

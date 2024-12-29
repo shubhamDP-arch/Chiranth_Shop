@@ -127,7 +127,11 @@ class ProductController implements Controller {
         try {
             const { name, quantity, price, description, categoryId } = req.body;
 
-          
+            console.log(name)
+            console.log(quantity)
+            console.log(price)
+            console.log(description)
+            console.log(categoryId)
             if (!name || !quantity || !price || !categoryId) {
                 return next(new HttpException(400, "Missing required fields"));
             }
@@ -136,7 +140,7 @@ class ProductController implements Controller {
                 return next(new HttpException(400, "Invalid category ID"));
             }
 
-   
+            console.log("hello")
             const product = await this.productService.create(
                 name,
                 quantity,

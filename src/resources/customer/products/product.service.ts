@@ -4,10 +4,11 @@ import { HydratedDocument } from "mongoose";
 class ProductService{
   private product = productModel;
 
-  public async create(name: string, quantity: number, price: number, description: string ){
+  public async create(name: string, quantity: number, price: number, description: string ):Promise<HydratedDocument<Product>>{
   try{
     const product = await this.product.create({name, quantity, price, description})
     product.save()
+    console.log(product)
     return product;
   }
   catch(error){

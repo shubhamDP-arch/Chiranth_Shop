@@ -252,6 +252,9 @@ class CartController {
       const cart = await this.cartService.getCart(
         new Types.ObjectId(userId as string)
       );
+      if(!cart){
+        throw new HttpException(400, "Cart data not avaliable")
+      }
       res.status(200).json({
         message: "Cart retrieved successfully",
         data: cart,

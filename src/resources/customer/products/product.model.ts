@@ -7,7 +7,6 @@ const ProductSchema: Schema = new Schema({
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
   description: { type: String, required: true },
-  image:{type:String, required:true}
 }, {
   timestamps: true 
 });
