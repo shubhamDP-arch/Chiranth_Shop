@@ -1,15 +1,11 @@
 import userModel from "@/resources/customer/user/user.model";
 import token from "@/utils/token";
-
+import User from "./user.interface";
 class UserService{
   private user = userModel
 
-  public async register(name: string, email: string, password: string, role: string): Promise<string> {
+  public async register(name: string, email: string, password: string, role: string): Promise<User>{
     try {
-        console.log("hello reg")
-        if (!name || !email || !password || !role) {
-            throw new Error('All fields are required.');
-        }
 
         const existingUser = await this.user.findOne({email });
         console.log(existingUser)
@@ -25,8 +21,7 @@ class UserService{
             role,
         });
 
-        const accessToken = token.createToken(user);
-        return accessToken;
+        return user;
     } catch (error: any) {
         throw new Error(error.message || 'Unable to create user.');
     }
@@ -35,12 +30,8 @@ class UserService{
 public async login(email: string, password: string): Promise<string> {
   try {
 
-      if (!email || !password) {
-          throw new Error('Email and password are required.');
-      }
-      console.log(email)
       const user = await this.user.findOne({ email });
-      console.log(user)
+
       if (!user) {
           throw new Error('No account found with this email address.');
       }

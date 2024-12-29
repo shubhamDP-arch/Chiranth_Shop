@@ -133,13 +133,9 @@ class UserController implements Controller {
     ): Promise<void> => {
         try {
             const { name, email, password } = req.body;
-            console.log("hello")
-            if (!name || !email || !password) {
-                res.status(400).json({ message: 'Name, email, and password are required.' });
-                return;
-            }
+        
     
-            const token = await this.UserService.register(
+            const userInfo = await this.UserService.register(
                 name,
                 email,
                 password,
@@ -148,13 +144,11 @@ class UserController implements Controller {
     
             console.log('middleware Triggered');
     
-            res.status(200).json({ token });
+            res.status(200).json(userInfo);
         } catch (error: any) {
             if (error.message.includes('User already exists')) {
                 res.status(400).json({ message: error.message });
-            } else if (error.message.includes('All fields are required')) {
-                res.status(400).json({ message: error.message });
-            } else {
+            }  else {
                 
                 next(new HttpException(500, error.message || 'Internal server error.'));
             }
@@ -168,11 +162,7 @@ class UserController implements Controller {
     ): Promise<void> => {
         try {
             const { email, password } = req.body;
-    
-            if (!email || !password) {
-                res.status(400).json({ message: 'Email and password are required.' });
-                return;
-            }
+
     
             const token = await this.UserService.login(email, password);
     
@@ -180,7 +170,7 @@ class UserController implements Controller {
     
             res.status(200).json({ token });
         } catch (error: any) {
-            if (error.message.includes('No account found')) {
+            if (error.message.includes('No account found with this email address.')) {
                 res.status(400).json({ message: error.message });
             } else if (error.message.includes('Invalid email or password')) {
                 res.status(400).json({ message: error.message });

@@ -123,7 +123,7 @@ class CartController {
      *     summary: Retrieve the user's cart
      *     tags: [Cart]
      *     parameters:
-     *       - in: query
+     *       - in: body
      *         name: userId
      *         schema:
      *           type: string
@@ -239,7 +239,7 @@ class CartController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { userId } = req.query;
+      const { userId } = req.body;
 
       if (!userId) {
         throw new HttpException(400, "userId is required");

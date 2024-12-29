@@ -127,14 +127,6 @@ class ProductController implements Controller {
         try {
             const { name, quantity, price, description, categoryId } = req.body;
 
-            console.log(name)
-            console.log(quantity)
-            console.log(price)
-            console.log(description)
-            console.log(categoryId)
-            if (!name || !quantity || !price || !categoryId) {
-                return next(new HttpException(400, "Missing required fields"));
-            }
 
             if (!Types.ObjectId.isValid(categoryId)) {
                 return next(new HttpException(400, "Invalid category ID"));

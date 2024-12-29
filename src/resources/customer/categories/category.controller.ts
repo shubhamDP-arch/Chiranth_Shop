@@ -161,7 +161,7 @@ class CategoryController implements Controller {
     ): Promise<void> => {
         try {
             const { name, productsId } = req.body;
-            console.log(name)
+            
             if (!name) {
                 return next(new HttpException(400, "Category name is required"));
             }
@@ -238,9 +238,6 @@ class CategoryController implements Controller {
         try {
             const { name } = req.body;
 
-            if (!name) {
-                return next(new HttpException(400, "Category name is required"));
-            }
     
             const category = await this.categoryService.getCategoryByName(name);
            
