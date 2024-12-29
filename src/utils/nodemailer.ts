@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer";
 
 
-export default function mailSender(){
-return nodemailer.createTransport({
+export default function sendMail(){
+return  nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,

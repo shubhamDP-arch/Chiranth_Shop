@@ -1,15 +1,14 @@
 import { Router } from "express";
-import EmailService from "./email.service";// Assuming EmailService is in services folder
+import EmailService from "./email.service";
 import { Request, Response, NextFunction } from "express";
 import HttpException from "@/utils/exceptions/http.exception";
-import validate from "@/resources/customer/email/email.validate"; // Assuming validation for the order
+import validate from "@/resources/customer/email/email.validate"; 
 import validationMiddleware from "@/middleware/validation.middleware";
 
 class EmailNotificationController {
     public path = "/email-notifications";
     public router = Router();
-    private emailService = new EmailService(); // Assuming EmailService handles sending emails
-
+    private emailService = new EmailService(); 
     constructor() {
         this.initialiseRoutes();
     }
@@ -54,7 +53,7 @@ class EmailNotificationController {
          */
         this.router.post(
             `${this.path}/send-order-confirmation`,
-            validationMiddleware(validate.orderNotificationValidation), // Assuming validation schema for order
+            validationMiddleware(validate.orderNotificationValidation), 
             this.sendOrderConfirmation
         );
     }
