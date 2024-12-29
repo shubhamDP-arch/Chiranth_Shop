@@ -153,12 +153,7 @@ class CartController {
     this.router.get(`${this.path}`, this.getCart);
   }
 
-  /**
-   * Adds a product to the user's cart.
-   * @param req - Express request object containing userId, productId, and quantity in the body.
-   * @param res - Express response object.
-   * @param next - Express next middleware function.
-   */
+
   private addToCart = async (
     req: Request,
     res: Response,
@@ -174,7 +169,7 @@ class CartController {
         );
       }
 
-      // Validate ObjectId format
+
       if (
         !Types.ObjectId.isValid(userId) ||
         !Types.ObjectId.isValid(productId)
@@ -201,12 +196,7 @@ class CartController {
     }
   };
 
-  /**
-   * Removes a product from the user's cart.
-   * @param req - Express request object containing userId and productId in the body.
-   * @param res - Express response object.
-   * @param next - Express next middleware function.
-   */
+
   private removeFromCart = async (
     req: Request,
     res: Response,
@@ -219,7 +209,6 @@ class CartController {
         throw new HttpException(400, "userId and productId are required");
       }
 
-      // Validate ObjectId format
       if (
         !Types.ObjectId.isValid(userId) ||
         !Types.ObjectId.isValid(productId)
@@ -244,13 +233,6 @@ class CartController {
       );
     }
   };
-
-  /**
-   * Retrieves the user's cart.
-   * @param req - Express request object containing userId as a query parameter.
-   * @param res - Express response object.
-   * @param next - Express next middleware function.
-   */
   private getCart = async (
     req: Request,
     res: Response,
@@ -263,7 +245,6 @@ class CartController {
         throw new HttpException(400, "userId is required");
       }
 
-      // Validate ObjectId format
       if (!Types.ObjectId.isValid(userId as string)) {
         throw new HttpException(400, "Invalid userId format");
       }

@@ -133,21 +133,34 @@ class UserController implements Controller {
     ): Promise<void> => {
         try {
             const { name, email, password } = req.body;
-
+            console.log("hello")
+            if (!name || !email || !password) {
+                res.status(400).json({ message: 'Name, email, and password are required.' });
+                return;
+            }
+    
             const token = await this.UserService.register(
                 name,
                 email,
                 password,
                 'user'
             );
+    
             console.log('middleware Triggered');
-
-            res.status(201).json({ token });
+    
+            res.status(200).json({ token });
         } catch (error: any) {
-            next(new HttpException(400, error.message));
+            if (error.message.includes('User already exists')) {
+                res.status(400).json({ message: error.message });
+            } else if (error.message.includes('All fields are required')) {
+                res.status(400).json({ message: error.message });
+            } else {
+                
+                next(new HttpException(500, error.message || 'Internal server error.'));
+            }
         }
     };
-
+    
     private login = async (
         req: Request,
         res: Response,
@@ -155,26 +168,46 @@ class UserController implements Controller {
     ): Promise<void> => {
         try {
             const { email, password } = req.body;
-
+    
+            if (!email || !password) {
+                res.status(400).json({ message: 'Email and password are required.' });
+                return;
+            }
+    
             const token = await this.UserService.login(email, password);
-
+    
+            console.log('User login successful');
+    
             res.status(200).json({ token });
         } catch (error: any) {
-            next(new HttpException(400, error.message));
+            if (error.message.includes('No account found')) {
+                res.status(400).json({ message: error.message });
+            } else if (error.message.includes('Invalid email or password')) {
+                res.status(400).json({ message: error.message });
+            } else if (error.message.includes('Email and password are required')) {
+                res.status(400).json({ message: error.message });
+            } else {
+                next(new HttpException(500, error.message || 'Internal server error.'));
+            }
         }
     };
-
+    
     private getUser = (
         req: Request,
         res: Response,
         next: NextFunction
-    ): void => {
-        if (!req.user) {
-            return next(new HttpException(404, 'No logged in user'));
-        }
+    ): any => {
+        try {
+            if (!req.user) {
+                return res.status(404).json({ message: 'No logged-in user found.' });
+            }
 
-        res.status(200).send({ data: req.user });
+            res.status(200).json({ data: req.user });
+        } catch (error: any) {
+            next(new HttpException(500, error.message || 'Internal server error.'));
+        }
     };
+    
 }
 
 export default UserController;

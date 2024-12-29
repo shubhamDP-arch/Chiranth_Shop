@@ -127,25 +127,42 @@ class ProductController implements Controller {
         try {
             const { name, quantity, price, description, categoryId } = req.body;
 
+          
+            if (!name || !quantity || !price || !categoryId) {
+                return next(new HttpException(400, "Missing required fields"));
+            }
+
+            if (!Types.ObjectId.isValid(categoryId)) {
+                return next(new HttpException(400, "Invalid category ID"));
+            }
+
+   
             const product = await this.productService.create(
                 name,
                 quantity,
                 price,
                 description
             );
-            const category = await this.categoryService.getCategoryById(categoryId);
+
             if (!product || !product._id) {
-                next(new HttpException(400, "Product ID not given properly"));
+                return next(new HttpException(400, "Failed to create product"));
             }
-            const productId = product._id as Types.ObjectId;
-            category.products.push(productId);
+
+           
+            const category = await this.categoryService.getCategoryById(categoryId);
+            if (!category) {
+                return next(new HttpException(404, "Category not found"));
+            }
+
+            category.products.push(product._id as Types.ObjectId);
             await category.save();
-            await product.save();
-            res.status(201).send(product);
+
+            res.status(201).json({ product });
         } catch (error: any) {
-            next(new HttpException(400, error.message));
+            next(new HttpException(500, error.message));
         }
     };
+
 
     private getAllProduct = async (
         req: Request,
@@ -153,12 +170,13 @@ class ProductController implements Controller {
         next: NextFunction
     ): Promise<void> => {
         try {
-            const allProduct = await this.productService.allProduct();
-            res.status(201).send(allProduct);
+            const allProducts = await this.productService.allProduct();
+            res.status(200).json({ products: allProducts });
         } catch (error: any) {
-            next(new HttpException(400, error.message));
+            next(new HttpException(500, "Unable to fetch products"));
         }
     };
+
 
     private productDetailById = async (
         req: Request,
@@ -167,12 +185,23 @@ class ProductController implements Controller {
     ): Promise<void> => {
         try {
             const { productId } = req.body;
+
+       
+            if (!Types.ObjectId.isValid(productId)) {
+                return next(new HttpException(400, "Invalid product ID"));
+            }
+
             const productDetail = await this.productService.getProductById(productId);
-            res.status(201).send(productDetail);
+            if (!productDetail) {
+                return next(new HttpException(404, "Product not found"));
+            }
+
+            res.status(200).json({ product: productDetail });
         } catch (error: any) {
-            next(new HttpException(400, error.message));
+            next(new HttpException(500, error.message));
         }
     };
 }
+
 
 export default ProductController;

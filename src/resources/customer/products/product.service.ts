@@ -3,7 +3,7 @@ import productModel from "./product.model";
 import { HydratedDocument } from "mongoose";
 class ProductService{
   private product = productModel;
-  //comment later add to admin
+
   public async create(name: string, quantity: number, price: number, description: string ){
   try{
     const product = await this.product.create({name, quantity, price, description})

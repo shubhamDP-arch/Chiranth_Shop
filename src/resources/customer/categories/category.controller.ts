@@ -20,7 +20,7 @@ class CategoryController implements Controller {
          * @swagger
          * /categories/create:
          *   post:
-         *     summary: Create a new category initially add the products as an empty array please
+         *     summary: Create a new category initially add the products as an empty array please while creating category
          *     tags:
          *       - Categories
          *     requestBody:
@@ -161,38 +161,32 @@ class CategoryController implements Controller {
     ): Promise<void> => {
         try {
             const { name, productsId } = req.body;
-            let categoryPresent = null;
 
-            try {
-                categoryPresent = await this.categoryService.getCategoryByName(name);
-            } catch (error) {
-                categoryPresent = null;
+            if (!name) {
+                return next(new HttpException(400, "Category name is required"));
             }
-
-            if (categoryPresent) {
-                return next(new HttpException(400, "Category already present"));
-            }
-
+    
             if (!Array.isArray(productsId)) {
                 return next(new HttpException(400, "Product IDs must be an array"));
             }
-            
-
+    
             const isValidIds = productsId.every((id: string) => mongoose.Types.ObjectId.isValid(id));
             if (!isValidIds) {
                 return next(new HttpException(400, "One or more Product IDs are invalid"));
             }
 
-            if (!name) {
-                return next(new HttpException(400, "Category name is required"));
+            const categoryPresent = await this.categoryService.getCategoryByName(name);
+            if (categoryPresent) {
+                return next(new HttpException(400, "Category already exists"));
             }
-
+ 
             const category = await this.categoryService.create(name, productsId);
             res.status(201).json({ category });
         } catch (error: any) {
-            next(new HttpException(400, error.message));
+            next(new HttpException(500, error.message || "Internal server error"));
         }
     };
+    
 
     private getAllCategory = async (
         req: Request,
@@ -201,11 +195,13 @@ class CategoryController implements Controller {
     ): Promise<void> => {
         try {
             const allCategory = await this.categoryService.allCategory();
-            res.status(201).json({ allCategory });
+
+            res.status(200).json({ categories: allCategory });
         } catch (error: any) {
-            next(new HttpException(400, error.message));
+            next(new HttpException(500, error.message || "Unable to fetch categories"));
         }
     };
+    
 
     private getCategoryById = async (
         req: Request,
@@ -213,13 +209,24 @@ class CategoryController implements Controller {
         next: NextFunction
     ): Promise<void> => {
         try {
-            const { id } = req.body;
+            const { id } = req.params;
+
+            if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+                return next(new HttpException(400, "Invalid category ID"));
+            }
+    
             const category = await this.categoryService.getCategoryById(id);
-            res.status(201).json({ category });
+    
+            if (!category) {
+                return next(new HttpException(404, "Category not found"));
+            }
+    
+            res.status(200).json({ category });
         } catch (error: any) {
-            next(new HttpException(400, error.message));
+            next(new HttpException(500, error.message || "Unable to fetch category"));
         }
     };
+    
 
     private getCategoryByName = async (
         req: Request,
@@ -228,12 +235,23 @@ class CategoryController implements Controller {
     ): Promise<void> => {
         try {
             const { name } = req.body;
+
+            if (!name) {
+                return next(new HttpException(400, "Category name is required"));
+            }
+    
             const category = await this.categoryService.getCategoryByName(name);
-            res.status(201).json({ category });
+    
+            if (!category) {
+                return next(new HttpException(404, "Category not found"));
+            }
+    
+            res.status(200).json({ category });
         } catch (error: any) {
-            next(new HttpException(400, error.message));
+            next(new HttpException(500, error.message || "Unable to fetch category"));
         }
     };
+    
 }
 
 export default CategoryController;
